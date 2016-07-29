@@ -3,6 +3,10 @@ import React from 'react';
 import { DB } from '../sources/fire';
 import Hilitor from '../scripts/hilighter'
 
+let results;
+
+const myHilitor = new Hilitor('content');
+
 class BodyComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -23,13 +27,14 @@ class BodyComponent extends React.Component {
         const count = snapshot.numChildren();
         const val = snapshot.val();
         console.log(`Found ${count} children: ${JSON.stringify(val)}`);
+        results = val;
+        myHilitor.apply(results); //('turtles believe');
     });
+
   }
   componentDidMount() {
     console.log('[BC] Loaded');
     // document.addEventListener("DOMContentLoaded", function() {
-    var myHilitor = new Hilitor('content');
-    myHilitor.apply('turtles believe');
   }
   componentWillUnmount() {
     //
@@ -39,6 +44,11 @@ class BodyComponent extends React.Component {
     return (
       <div className='body-component'>
         { dummyElements }
+        <p> This is some raw text
+            <b className='tooltip'> but look a tooltip!
+                <span className='tooltiptext'>Tooltip text</span>
+            </b>
+        </p>
       </div>
     );
   }

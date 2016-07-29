@@ -11,6 +11,8 @@ export default function Hilitor(id, tag)
   var wordColor = [];
   var colorIdx = 0;
   var matchRegex = '';
+  var replacementWords = {};
+  var hoverWords = {};
 
   this.setMatchType = function(type)
   {
@@ -31,6 +33,25 @@ export default function Hilitor(id, tag)
         this.openLeft = this.openRight = false;
     }
   };
+
+  this.setReplacementWords = function(mapping) {
+    Object.keys(mapping).forEach( (key, idx) => {
+      let replacement;
+      var hover = null;
+      try {
+        replacement = mapping[key].swap ? mapping[key].swap : key;
+        hover = mapping[key].message ? mapping[key].message : null;
+      }
+      catch(err) {
+        console.error(`[HI] ERROR: ${err}`);
+        replacement = key;
+      }
+      finally {
+        replacementWords[key] = replacement;
+        hoverWords[key] = hover;
+      }
+    });
+  }
 
   this.setRegex = function(input)
   {
@@ -74,7 +95,23 @@ export default function Hilitor(id, tag)
         }
 
         var match = document.createElement(hiliteTag);
-        match.appendChild(document.createTextNode(regs[0]));
+        // console.log(regs[0], replacementWords);
+        var replacementText = replacementWords[ regs[0].toLowerCase() ]
+        replacementText = replacementText ? replacementText : regs[0];
+
+        const childTextNode = document.createTextNode( replacementText );
+        match.appendChild(childTextNode);
+
+        const hover = hoverWords[ regs[0].toLowerCase() ]
+        if (hover) {
+          const tooltiptext =  document.createTextNode(hover);
+          const tooltipspan = document.createElement('span');
+          match.classList = 'tooltip';
+          tooltipspan.classList = 'tooltiptext';
+          tooltipspan.appendChild(tooltiptext);
+          match.appendChild(tooltipspan);
+        }
+
         match.style.backgroundColor = wordColor[regs[0].toLowerCase()];
         match.style.fontStyle = 'inherit';
         match.style.color = '#000';
@@ -103,7 +140,17 @@ export default function Hilitor(id, tag)
   {
     this.remove();
     if(input === undefined || !input) return;
-    if(this.setRegex(input)) {
+    let inputString = input
+    if(typeof(input) != 'string') {
+      try {
+        this.setReplacementWords(input);
+        inputString = Object.keys(input).join(' ');
+      }
+      catch(err) {
+        console.warn(`[HI] Error: ${err}`);
+      }
+    }
+    if(this.setRegex(inputString)) {
       this.hiliteWords(targetNode);
     }
   };
