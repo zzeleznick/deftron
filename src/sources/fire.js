@@ -8,4 +8,4 @@ var config = {
 
 firebase.initializeApp(config);
 
-export const DB = firebase.database().ref('/words');
+export const DB = firebase.database();

@@ -12,6 +12,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Main from '../components/Main';
 import BodyComponent from '../components/BodyComponent';
+import PresenceComponent from '../components/PresenceComponent';
+
 /* Populated by react-webpack-redux:reducer */
 
 class App extends Component {
@@ -21,6 +23,7 @@ class App extends Component {
       <div className='app'>
         <Main actions={actions} main={main}/>
         <BodyComponent />
+        <PresenceComponent />
       </div>
     );
   }

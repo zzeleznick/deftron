@@ -10,7 +10,7 @@ const myHilitor = new Hilitor('content');
 class BodyComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.firebaseRef = DB;
+    this.firebaseRef = DB.ref('/words');
     this.makeDummyElements = this.makeDummyElements.bind(this);
   }
   makeDummyElements() {
